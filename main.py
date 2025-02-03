@@ -6,7 +6,9 @@ import requests
 import Secrets  # Import the discord token and API key from the Secrets.py file
 from discord import app_commands
 import os
+import webserver
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -106,6 +108,5 @@ async def tran(interaction: discord.Interaction, language: app_commands.Choice[s
     translated_text = await translate_text(text, target_language)
     await interaction.response.send_message(f"{translated_text}")
 
-#Hacemos que el bot corra en local con el token del archivo secrets
+webserver.keep_alive()
 bot.run(DISCORD_TOKEN)
-
