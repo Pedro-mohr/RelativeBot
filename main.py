@@ -3,7 +3,6 @@
 import discord
 from discord.ext import commands
 import requests
-import Secrets  # Import the discord token and API key from the Secrets.py file
 from discord import app_commands
 import os
 import webserver
