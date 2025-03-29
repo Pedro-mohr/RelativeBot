@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y ffmpeg git
 WORKDIR /app
 
 # Copiar archivos necesarios
-COPY requirements.txt .
+COPY Requirements.txt .
 COPY main.py .
 COPY webserver.py .
 
