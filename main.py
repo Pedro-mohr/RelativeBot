@@ -138,36 +138,28 @@ def get_queue(guild_id):
         music_queues[guild_id] = MusicQueue()
     return music_queues[guild_id]
 
-# En la sección de configuración de yt-dlp
+# ytdl
 ytdl_format_options = {
     'format': 'bestaudio/best',
-    'noplaylist': True,
-    'quiet': False,  # Habilita logs para diagnóstico
-    'no_warnings': False,
-    'default_search': 'auto',
-    'cookiefile': 'cookies.txt',  # Archivo con cookies de sesión
-    'age_limit': 18,  # Para videos con restricción de edad
-    'geo_bypass': True,  # Ignora restricciones geográficas
-    'socket_timeout': 30,
-    'force-ipv4': True,  # Fuerza IPv4
+    'cookiefile': 'cookies.txt',
     'extractor_args': {
         'youtube': {
-            'skip': ['dash', 'hls'],  # Evita formatos problemáticos
-            'player_client': ['android', 'web']  # Cliente alternativo
+            'player_client': ['android'],
+            'skip': ['dash', 'hls']
         }
     },
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.5790.172 Mobile Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+    },
+    'geo_bypass_country': 'US',
+    'socket_timeout': 15,
+    'force-ipv4': True,
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
         'preferredquality': '192',
     }],
-    'ffmpeg_location': '/usr/bin/ffmpeg',  # Ruta en Render
-    'retries': 3,  # Reintentos ante fallos
-    'fragment_retries': 3,
-    'extract_flat': False,
-    'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
 }
 
 ffmpeg_options = {'options': '-vn'}
