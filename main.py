@@ -144,16 +144,17 @@ ytdl_format_options = {
     'cookiefile': 'cookies.txt',
     'extractor_args': {
         'youtube': {
-            'player_client': ['android'],
+            'player_client': ['web'],  # ¡Clave! Usar solo cliente web
             'skip': ['dash', 'hls']
         }
     },
     'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.5790.172 Mobile Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'X-Origin': 'https://www.youtube.com',
     },
     'geo_bypass_country': 'US',
-    'socket_timeout': 15,
+    'socket_timeout': 20,
     'force-ipv4': True,
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
