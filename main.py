@@ -199,31 +199,29 @@ class YTDLSource(discord.PCMVolumeTransformer):
         )
 
 # Comandos de música (Slash Commands)
-@bot.tree.command(name="play", description="Reproduce música desde YouTube")
+@bot.tree.command(name="play")
 @app_commands.describe(busqueda="URL o nombre de la canción")
 async def play(interaction: discord.Interaction, busqueda: str):
-    await interaction.response.defer()
-    
-    if not interaction.user.voice:
-        return await interaction.followup.send("❌ **You have to be in a voice channel.**")
-    
-    voice_client = interaction.guild.voice_client
-    if not voice_client:
-        voice_client = await interaction.user.voice.channel.connect()
-    
-    queue = get_queue(interaction.guild.id)
-    
     try:
-        song = await YTDLSource.from_url(busqueda)
+        await interaction.response.defer(ephemeral=False)  # Indica que el bot está procesando
+        
+        # Limita la descarga a 10 segundos
+        song = await asyncio.wait_for(YTDLSource.from_url(busqueda), timeout=10)
+        queue = get_queue(interaction.guild.id)
         queue.add_to_queue(song)
         
+        voice_client = interaction.guild.voice_client
         if not voice_client.is_playing():
             await play_next(interaction.guild)
-            await interaction.followup.send(f"🎶 **Replaying:** {song.title}")
+            await interaction.followup.send(f"🎶 **Now playing:** {song.title}")
         else:
-            await interaction.followup.send(f"🎵 **Añadido a la cola:** {song.title}")
+            await interaction.followup.send(f"🎵 **Adding to queue:** {song.title}")
+            
+    except asyncio.TimeoutError:
+        await interaction.followup.send("❌ **Timeout.** Try again with other link.")
     except Exception as e:
-        await interaction.followup.send(f"❌ **Error:** {str(e)}")
+        await interaction.followup.send("❌ **Serious error:** " + str(e))
+        print(f"[ERROR] {traceback.format_exc()}")  # Log detallado
 
 async def play_next(guild):
     queue = get_queue(guild.id)
