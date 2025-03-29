@@ -1,4 +1,4 @@
-# pip install -requirements.txt
+# pip install -Requirements.txt
 
 import discord
 from discord.ext import commands
