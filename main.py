@@ -140,23 +140,32 @@ def get_queue(guild_id):
 ytdl_format_options = {
     'format': 'bestaudio/best',
     'noplaylist': True,
-    'quiet': True,
-    'no_warnings': False,  # Habilita mensajes de advertencia
+    'quiet': False,  # Habilita logs para diagnóstico
+    'no_warnings': False,
     'default_search': 'auto',
+    'cookiefile': 'cookies.txt',  # Archivo con cookies de sesión
+    'age_limit': 18,  # Para videos con restricción de edad
+    'geo_bypass': True,  # Ignora restricciones geográficas
+    'socket_timeout': 30,
+    'force-ipv4': True,  # Fuerza IPv4
+    'extractor_args': {
+        'youtube': {
+            'skip': ['dash', 'hls'],  # Evita formatos problemáticos
+            'player_client': ['android', 'web']  # Cliente alternativo
+        }
+    },
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
         'preferredquality': '192',
     }],
-    'extractor_args': {
-        'youtube': {
-            'skip': ['dash', 'hls'],
-            'player_client': ['android', 'web']  # Cliente alternativo
-        }
-    },
-    'geo_bypass': True,  # Ignora restricciones geográficas
-    'socket_timeout': 30,
-    'force-ipv4': True,
+    'ffmpeg_location': '/usr/bin/ffmpeg',  # Ruta en Render
+    'retries': 3,  # Reintentos ante fallos
+    'fragment_retries': 3,
+    'extract_flat': False,
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
 }
 
 ffmpeg_options = {'options': '-vn'}
