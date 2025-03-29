@@ -136,11 +136,12 @@ def get_queue(guild_id):
         music_queues[guild_id] = MusicQueue()
     return music_queues[guild_id]
 
+# En la sección de configuración de yt-dlp
 ytdl_format_options = {
     'format': 'bestaudio/best',
     'noplaylist': True,
     'quiet': True,
-    'no_warnings': True,  # Suprime advertencias
+    'no_warnings': False,  # Habilita mensajes de advertencia
     'default_search': 'auto',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
@@ -149,12 +150,13 @@ ytdl_format_options = {
     }],
     'extractor_args': {
         'youtube': {
-            'skip': ['dash', 'hls', 'translated_subs']
+            'skip': ['dash', 'hls'],
+            'player_client': ['android', 'web']  # Cliente alternativo
         }
     },
-    'socket_timeout': 30,  # Evita timeouts
-    'force-ipv4': True,  # Fuerza IPv4
-    'cookiefile': 'cookies.txt'  # Si tienes cookies
+    'geo_bypass': True,  # Ignora restricciones geográficas
+    'socket_timeout': 30,
+    'force-ipv4': True,
 }
 
 ffmpeg_options = {'options': '-vn'}
