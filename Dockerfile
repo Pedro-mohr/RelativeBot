@@ -1,22 +1,14 @@
 FROM python:3.10-slim
 
-# Instalar dependencias del sistema y FFmpeg
-RUN apt-get update && apt-get install -y ffmpeg git
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    libssl3 \
+    libexpat1 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Configurar el entorno de trabajo
 WORKDIR /app
+COPY . .
 
-# Copiar archivos necesarios
-COPY Requirements.txt .
-COPY main.py .
-COPY webserver.py .
+RUN pip install --no-cache-dir -r Requirements.txt
 
-# Instalar dependencias de Python
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r Requirements.txt
-
-# Usar la variable de entorno PORT para Flask
-ENV PORT=8000
-
-# Comando de inicio (NO se define en la UI de Render)
 CMD ["python", "main.py"]
