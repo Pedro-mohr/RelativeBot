@@ -18,7 +18,8 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 with open('cookies.txt', 'w', newline='\n') as f:
-    f.write(os.environ.get('COOKIES_CONTENT', ''))  # Crea el archivo desde Render
+    f.write(os.environ.get('COOKIES_CONTENT', ''))
+    os.chmod('cookies.txt', 0o600)
     
 # Import the OpenAI API
 import openai
