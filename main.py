@@ -207,7 +207,7 @@ async def play(interaction: discord.Interaction, busqueda: str):
         
         if not voice_client.is_playing():
             await play_next(interaction.guild)
-            await interaction.followup.send(f"🎶 **Reproduciend:** {song.title}")
+            await interaction.followup.send(f"🎶 **Replaying:** {song.title}")
         else:
             await interaction.followup.send(f"🎵 **Añadido a la cola:** {song.title}")
     except Exception as e:
@@ -221,7 +221,7 @@ async def play_next(guild):
         next_song = queue.next_song()
         if next_song:
             voice_client.play(next_song, after=lambda e: asyncio.run_coroutine_threadsafe(play_next(guild), bot.loop))
-            await guild.system_channel.send(f"🎶 **Ahora sonando:** {next_song.title}")
+            await guild.system_channel.send(f"🎶 **Now is playing:** {next_song.title}")
         else:
             await voice_client.disconnect()
 
@@ -233,7 +233,7 @@ async def stop(interaction: discord.Interaction):
         await voice_client.disconnect()
         await interaction.response.send_message("⏹ **Música detenida.**")
     else:
-        await interaction.response.send_message("❌ El bot no está en un canal de voz.", ephemeral=True)
+        await interaction.response.send_message(" Relative has to be in a voice channel.", ephemeral=True)
 
 @bot.tree.command(name="skip", description="Salta la canción actual")
 async def skip(interaction: discord.Interaction):
@@ -242,7 +242,7 @@ async def skip(interaction: discord.Interaction):
         voice_client.stop()
         await interaction.response.send_message("⏭ **Canción saltada.**")
     else:
-        await interaction.response.send_message("❌ No hay música reproduciéndose.", ephemeral=True)
+        await interaction.response.send_message("❌ No music.", ephemeral=True)
 
 
 
