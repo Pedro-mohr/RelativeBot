@@ -13,7 +13,7 @@ COPY webserver.py .
 
 # Instalar dependencias de Python
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r Requirements.txt
 
 # Usar la variable de entorno PORT para Flask
 ENV PORT=8000
