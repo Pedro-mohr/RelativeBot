@@ -139,22 +139,27 @@ def get_queue(guild_id):
     return music_queues[guild_id]
 
 # ytdl
+# En ytdl_format_options, REEMPLAZAR CON:
 ytdl_format_options = {
     'format': 'bestaudio/best',
     'cookiefile': 'cookies.txt',
     'extractor_args': {
         'youtube': {
-            'player_client': ['web'],  # ¡Clave! Usar solo cliente web
+            'player_client': ['web'],
+            'data_sync_id': 'TU_ID_UNICO',  # ¡Clave! Ej: 'a1b2c3d4e5'
             'skip': ['dash', 'hls']
         }
     },
     'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0',
         'Accept-Language': 'en-US,en;q=0.5',
-        'X-Origin': 'https://www.youtube.com',
+        'X-Youtube-Client-Name': '1',  # Headers específicos de YouTube
+        'X-Youtube-Client-Version': '2.20240710.00.00'
     },
-    'geo_bypass_country': 'US',
-    'socket_timeout': 20,
+    'throttled_rate': '1M',  # Limitar velocidad de descarga
+    'retries': 10,  # Aumentar reintentos
+    'fragment_retries': 10,
+    'socket_timeout': 30,
     'force-ipv4': True,
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
