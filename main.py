@@ -146,7 +146,7 @@ ytdl_format_options = {
     'extractor_args': {
         'youtube': {
             'player_client': ['web'],
-            'data_sync_id': 'TU_ID_UNICO',  # ¡Clave! Ej: 'a1b2c3d4e5'
+            'data_sync_id': 'd41f8a9b3e7c2d6a',  # ¡Clave! Ej: 'a1b2c3d4e5'
             'skip': ['dash', 'hls']
         }
     },
