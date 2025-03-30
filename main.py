@@ -12,6 +12,7 @@ from collections import deque
 import yt_dlp as youtube_dl
 import asyncio
 import traceback
+import secrets
 
 load_dotenv()
 
