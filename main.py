@@ -11,6 +11,7 @@ from discord import FFmpegPCMAudio
 from collections import deque
 import yt_dlp as youtube_dl
 import asyncio
+import traceback
 
 load_dotenv()
 
@@ -146,20 +147,20 @@ ytdl_format_options = {
     'extractor_args': {
         'youtube': {
             'player_client': ['web'],
-            'data_sync_id': 'd41f8a9b3e7c2d6a',  # ¡Clave! Ej: 'a1b2c3d4e5'
-            'skip': ['dash', 'hls']
+            'skip': ['dash', 'hls'],
+            'data_sync_id': secrets.token_hex(8)  # ID único por ejecución
         }
     },
     'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'X-Youtube-Client-Name': '1',  # Headers específicos de YouTube
-        'X-Youtube-Client-Version': '2.20240710.00.00'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'X-Origin': 'https://www.youtube.com',
+        'Referer': 'https://www.youtube.com/'
     },
-    'throttled_rate': '1M',  # Limitar velocidad de descarga
-    'retries': 10,  # Aumentar reintentos
-    'fragment_retries': 10,
-    'socket_timeout': 30,
+    'throttled_rate': '512K',  # Limitar ancho de banda
+    'retries': 15,
+    'fragment_retries': 15,
+    'socket_timeout': 25,
     'force-ipv4': True,
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
@@ -201,8 +202,11 @@ class YTDLSource(discord.PCMVolumeTransformer):
 @bot.tree.command(name="play")
 @app_commands.describe(busqueda="URL o nombre de la canción")
 async def play(interaction: discord.Interaction, busqueda: str):
+    await interaction.response.defer()
+    
     try:
-        await interaction.response.defer(ephemeral=False)  # Indica que el bot está procesando
+        # Delay anti-bot (1.5-4 segundos)
+        await asyncio.sleep(random.uniform(1.5, 4))
         
         # Limita la descarga a 10 segundos
         song = await asyncio.wait_for(YTDLSource.from_url(busqueda), timeout=10)
