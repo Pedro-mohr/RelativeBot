@@ -19,6 +19,10 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+
+if os.path.exists('cookies.txt'):
+    os.remove('cookies.txt')
+
 # Generar cookies.txt al iniciar (Añadir esto al inicio del archivo)
 with open('cookies.txt', 'w', newline='\n') as f:
     f.write(os.environ.get('COOKIES_CONTENT', ''))
