@@ -19,9 +19,10 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+# Generar cookies.txt al iniciar (Añadir esto al inicio del archivo)
 with open('cookies.txt', 'w', newline='\n') as f:
     f.write(os.environ.get('COOKIES_CONTENT', ''))
-    os.chmod('cookies.txt', 0o600)
+    os.chmod('cookies.txt', 0o600)  # Permisos estrictos
     
 # Import the OpenAI API
 import openai
@@ -148,21 +149,18 @@ ytdl_format_options = {
     'extractor_args': {
         'youtube': {
             'player_client': ['web'],
-            'skip': ['dash', 'hls'],
-            'data_sync_id': secrets.token_hex(8)  # ID único por ejecución
+            'data_sync_id': secrets.token_hex(8),  # ID único por instancia
+            'skip': ['dash', 'hls']
         }
     },
     'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
         'Accept-Language': 'en-US,en;q=0.9',
-        'X-Origin': 'https://www.youtube.com',
         'Referer': 'https://www.youtube.com/'
     },
-    'throttled_rate': '512K',  # Limitar ancho de banda
-    'retries': 15,
-    'fragment_retries': 15,
-    'socket_timeout': 25,
-    'force-ipv4': True,
+    'throttled_rate': '1M',  # Limitar velocidad de descarga
+    'retries': 20,
+    'socket_timeout': 30,
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
@@ -206,26 +204,30 @@ async def play(interaction: discord.Interaction, busqueda: str):
     await interaction.response.defer()
     
     try:
-        # Delay anti-bot (1.5-4 segundos)
-        await asyncio.sleep(random.uniform(1.5, 4))
+        # Delay anti-bot (2-5 segundos)
+        await asyncio.sleep(random.uniform(2, 5))
         
-        # Limita la descarga a 10 segundos
-        song = await asyncio.wait_for(YTDLSource.from_url(busqueda), timeout=10)
-        queue = get_queue(interaction.guild.id)
-        queue.add_to_queue(song)
+        if not interaction.user.voice:
+            return await interaction.followup.send("❌ **Debes estar en un canal de voz.**")
         
         voice_client = interaction.guild.voice_client
+        if not voice_client:
+            voice_client = await interaction.user.voice.channel.connect()
+        
+        queue = get_queue(interaction.guild.id)
+        
+        song = await YTDLSource.from_url(busqueda)
+        queue.add_to_queue(song)
+        
         if not voice_client.is_playing():
             await play_next(interaction.guild)
             await interaction.followup.send(f"🎶 **Now playing:** {song.title}")
         else:
             await interaction.followup.send(f"🎵 **Adding to queue:** {song.title}")
             
-    except asyncio.TimeoutError:
-        await interaction.followup.send("❌ **Timeout.** Try again with other link.")
     except Exception as e:
-        await interaction.followup.send("❌ **Serious error:** " + str(e))
-        print(f"[ERROR] {traceback.format_exc()}")  # Log detallado
+        await interaction.followup.send("❌ **Timeout.** Try again with other link.")
+        print(f"[ERROR] {traceback.format_exc()}")
 
 async def play_next(guild):
     queue = get_queue(guild.id)
